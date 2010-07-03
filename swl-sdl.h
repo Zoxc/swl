@@ -1,0 +1,17 @@
+#pragma once
+#include "SDL/SDL_keysym.h"	
+
+/*
+ * Key type definition
+ */
+typedef SDLKey swl_key_t;
+
+#define SWLK_UP SDLK_UP
+#define SWLK_DOWN SDLK_DOWN
+#define SWLK_LEFT SDLK_LEFT
+#define SWLK_RIGHT SDLK_RIGHT
+#define SWLK_GO SDLK_RETURN
+
+#define SWLR_ERROR_PLATFORM_SDL_INIT SWLR_PLATFORM(0)
+#define SWLR_ERROR_PLATFORM_SDL_MODE SWLR_PLATFORM(1)
+#define SWLR_ERROR_PLATFORM_SDL_DEVICE SWLR_PLATFORM(2)
