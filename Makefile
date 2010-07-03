@@ -1,0 +1,28 @@
+include ../Makefile.common
+
+TARGET = $(CFG)/libswl.a
+
+SOURCES = \
+	swl.c \
+	$(NULL)
+	
+SWL_BACKEND_WINAPI = 1
+
+ifeq ($(SWL_BACKEND_WINAPI),1)
+SOURCES += swl-winapi.c
+endif
+
+OBJECTS = $(patsubst %.c, $(CFG)/%.o, $(SOURCES) )
+
+.PHONY: build-dir 
+build-dir:
+	@mkdir -p $(CFG)
+
+$(TARGET): $(OBJECTS)
+	@$(AR) rsc $@ $(OBJECTS)
+
+.PHONY: clean 
+clean:
+	@rm -f $(OBJECTS) $(TARGET)
+
+all: build-dir $(TARGET)
