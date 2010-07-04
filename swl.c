@@ -75,7 +75,7 @@ static enum swl_result swl_allocate(void)
 
 	eglMakeCurrent(swl.egl_display, swl.egl_surface, swl.egl_surface, swl.egl_context);
 	
-	if(eglGetError())
+	if(eglGetError() != EGL_SUCCESS)
 		return SWLR_ERROR_EGL_ERROR;
 	else
 		return SWLR_OK;

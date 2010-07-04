@@ -11,6 +11,10 @@ ifeq ($(SWL_BACKEND_WINAPI),1)
 SOURCES += swl-winapi.c
 endif
 
+ifeq ($(SWL_BACKEND_XLIB),1)
+SOURCES += swl-xlib.c
+endif
+
 OBJECTS = $(patsubst %.c, $(CFG)/%.o, $(SOURCES) )
 
 .PHONY: build-dir 

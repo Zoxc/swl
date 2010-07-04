@@ -11,38 +11,38 @@ static Atom wm_delete_message;
 
 static bool process_event(struct swl_event *event, XEvent *x11_event)
 {
-	switch(event.type)
+	switch(x11_event->type)
 	{
 		case KeyPress:
 			event->type = SWLE_KEYDOWN;
-			event->key_event.key = (swl_key_t)XLookupKeysym(&x11_event.xkey, 0);
+			event->key_event.key = (swl_key_t)XLookupKeysym(&x11_event->xkey, 0);
 			break;
 
 		case KeyRelease:
 			event->type = SWLE_KEYUP;
-			event->key_event.key = (swl_key_t)XLookupKeysym(&x11_event.xkey, 0);
+			event->key_event.key = (swl_key_t)XLookupKeysym(&x11_event->xkey, 0);
 			break;
 
 		case ButtonPress:
 			event->type = SWLE_MOUSEDOWN;
-			event->mouse_event.x = x11_event.xbutton.x;
-			event->mouse_event.y = x11_event.xbutton.y;
+			event->mouse_event.x = x11_event->xbutton.x;
+			event->mouse_event.y = x11_event->xbutton.y;
 			break;
 
 		case ButtonRelease:
 			event->type = SWLE_MOUSEUP;
-			event->mouse_event.x = x11_event.xbutton.x;
-			event->mouse_event.y = x11_event.xbutton.y;
+			event->mouse_event.x = x11_event->xbutton.x;
+			event->mouse_event.y = x11_event->xbutton.y;
 			break;
 
 		case MotionNotify:
 			event->type = SWLE_MOUSEMOVE;
-			event->mouse_event.x = x11_event.xmotion.x;
-			event->mouse_event.y = x11_event.xmotion.y;
+			event->mouse_event.x = x11_event->xmotion.x;
+			event->mouse_event.y = x11_event->xmotion.y;
 			break;
 			
 		case ClientMessage:
-			if(x11_event.xclient.data.l[0] != wm_delete_message)
+			if(x11_event->xclient.data.l[0] != wm_delete_message)
 				return false;
 			
 			event->type = SWLE_QUIT;
@@ -63,7 +63,7 @@ bool SWL_API swl_query(struct swl_event *event)
 	
 	while(pending--)
 	{
-		XNextEvent(x11_display, x11_event);
+		XNextEvent(x11_display, &x11_event);
 		
 		if(process_event(event, &x11_event))
 			return true;
@@ -78,7 +78,7 @@ bool SWL_API swl_wait(struct swl_event *event)
 	
 	while(true)
 	{
-		XNextEvent(x11_display, x11_event);
+		XNextEvent(x11_display, &x11_event);
 		
 		if(process_event(event, &x11_event))
 			break;
