@@ -9,7 +9,7 @@ static XVisualInfo x11_visual;
 static Colormap x11_colormap;
 static Atom wm_delete_message;
 
-static void process_event(struct swl_event *event, XEvent *x11_event)
+static bool process_event(struct swl_event *event, XEvent *x11_event)
 {
 	switch(event.type)
 	{
@@ -40,10 +40,19 @@ static void process_event(struct swl_event *event, XEvent *x11_event)
 			event->mouse_event.x = x11_event.xmotion.x;
 			event->mouse_event.y = x11_event.xmotion.y;
 			break;
+			
+		case ClientMessage:
+			if(x11_event.xclient.data.l[0] != wm_delete_message)
+				return false;
+			
+			event->type = SWLE_QUIT;
+			break;
 
 		default:
 			break;
 	}
+	
+	return true;
 }
 
 bool SWL_API swl_query(struct swl_event *event)
@@ -52,23 +61,28 @@ bool SWL_API swl_query(struct swl_event *event)
 	
 	int pending = XPending(x11_display);
 	
-	if(!pending)
-		return false;
+	while(pending--)
+	{
+		XNextEvent(x11_display, x11_event);
 		
-	XNextEvent(x11_display, x11_event);
-		
-	process_event(event, &x11_event);
+		if(process_event(event, &x11_event))
+			return true;
+	}
 	
-	return true;
+	return false;
 }
 
 bool SWL_API swl_wait(struct swl_event *event)
 {
 	XEvent x11_event;
-
-	XNextEvent(x11_display, x11_event);
+	
+	while(true)
+	{
+		XNextEvent(x11_display, x11_event);
 		
-	process_event(event, &x11_event);
+		if(process_event(event, &x11_event))
+			break;
+	}
 	
 	return true;
 }
