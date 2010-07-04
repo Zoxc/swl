@@ -1,2 +1,0 @@
-
-#define SWL_BACKEND_WINAPI
