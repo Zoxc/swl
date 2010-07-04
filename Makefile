@@ -1,12 +1,11 @@
 include ../Makefile.common
+include Makefile.features
 
 TARGET = $(CFG)/libswl.a
 
 SOURCES = \
 	swl.c \
 	$(NULL)
-	
-SWL_BACKEND_WINAPI = 1
 
 ifeq ($(SWL_BACKEND_WINAPI),1)
 SOURCES += swl-winapi.c

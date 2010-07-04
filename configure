@@ -1,0 +1,33 @@
+#!/bin/sh
+
+echo "Configuring SWL..."
+
+CC=${CROSS_COMPILE}gcc
+C_FEATURES=swl-features.h
+MAKE_FEATURES=Makefile.features
+
+function test_code {
+	((echo $1 | ${CC} -fsyntax-only -x c - &> /dev/null) && echo 1) || echo 0
+}
+
+function test_header {
+	test_code "#include <$1>"
+}
+
+function output_option {
+	if [[ "$2" == "1" ]]; then
+		echo "#define $1" >> $C_FEATURES
+		echo "$1=1" >> $MAKE_FEATURES
+		return 0
+	else
+		return 1;
+	fi
+}
+
+echo "" > $C_FEATURES
+echo "" > $MAKE_FEATURES
+
+(output_option SWL_BACKEND_WINAPI $(test_header "windows.h")) ||
+(output_option SWL_BACKEND_XLIB $(test_header "X11/Xlib.h")) ||
+(output_option SWL_BACKEND_SDL $(test_header "SDL/SDL.h")) ||
+(echo "Unable to find a suitable backend for SWL!"; exit 1)
