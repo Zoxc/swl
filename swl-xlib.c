@@ -115,11 +115,9 @@ enum swl_result swl_platform_allocate(const char *title, unsigned int width, uns
 
 	mask = CWBackPixel | CWBorderPixel | CWEventMask | CWColormap;
 
-	x11_window = XCreateWindow(x11_display, RootWindow(x11_display, x11_screen), 0, 0, width, height,
-								 0, CopyFromParent, InputOutput, CopyFromParent, mask, &swa);
+	x11_window = XCreateWindow(x11_display, RootWindow(x11_display, x11_screen), 0, 0, width, height, 0, CopyFromParent, InputOutput, CopyFromParent, mask, &swa);
 
 	XSetStandardProperties(x11_display, x11_window, title, title, None, 0, 0, 0);
-
 
 	wm_delete_message = XInternAtom(x11_display, "WM_DELETE_WINDOW", False);
 	XSetWMProtocols(x11_display, x11_window, &wm_delete_message, 1);
