@@ -2,7 +2,13 @@
 #ifdef __cplusplus
 extern "C" {
 #else
-#include <stdbool.h>
+#ifdef _MSC_VER
+	typedef unsigned char bool;
+	#define true 1
+	#define false 0
+#else
+	#include <stdbool.h>
+#endif
 #endif
 
 #include "swl-features.h"

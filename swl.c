@@ -24,11 +24,23 @@ static struct {
 
 static enum swl_result swl_allocate(void)
 {
+	enum swl_result result;
+	EGLint major_version, minor_version;
+	
+	const EGLint config_attributes[] = {
+		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+		EGL_NONE};
+		
+	int configs;
+
+	EGLint context_attributes[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
+
 	swl.egl_display = EGL_NO_DISPLAY;
 	swl.egl_surface = EGL_NO_SURFACE;
 	swl.egl_context = EGL_NO_CONTEXT;
 	
-	enum swl_result result = swl_platform_allocate(swl.title, swl.width, swl.height, &swl.egl_handle, &swl.egl_display);
+	result = swl_platform_allocate(swl.title, swl.width, swl.height, &swl.egl_handle, &swl.egl_display);
 	
 	if(result != SWLR_OK)
 		return result;
@@ -41,18 +53,9 @@ static enum swl_result swl_allocate(void)
 			return SWLR_ERROR_DISPLAY_CREATION;
 	}
 
-	EGLint major_version, minor_version;
-
 	if (!eglInitialize(swl.egl_display, &major_version, &minor_version))
 		return SWLR_ERROR_EGL_CREATION;
 
-	const EGLint config_attributes[] = {
-		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-		EGL_NONE};
-
-	int configs;
-	
 	if (!eglChooseConfig(swl.egl_display, config_attributes, &swl.egl_config, 1, &configs) || (configs != 1))
 		return SWLR_ERROR_EGL_CONFIG;
 
@@ -65,8 +68,6 @@ static enum swl_result swl_allocate(void)
 		if(swl.egl_surface == EGL_NO_SURFACE)
 			return SWLR_ERROR_SURFACE_CREATION;
 	}
-
-	EGLint context_attributes[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
 
 	swl.egl_context = eglCreateContext(swl.egl_display, swl.egl_config, NULL, context_attributes);
 	
@@ -94,11 +95,13 @@ static void swl_deallocate(void)
 
 enum swl_result SWL_API swl_init(const char *title, unsigned int width, unsigned int height)
 {
+	enum swl_result result;
+
 	swl.title = title;
 	swl.width = width;
 	swl.height = height;
 	
-	enum swl_result result = swl_allocate();
+	result = swl_allocate();
 	
 	if(result != SWLR_OK)
 		swl_deallocate();

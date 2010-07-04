@@ -138,24 +138,27 @@ static LRESULT CALLBACK wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 
 enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, EGLNativeWindowType *handle, EGLDisplay *display)
 {
-	WNDCLASS sWC;
-	sWC.style = CS_HREDRAW | CS_VREDRAW;
-	sWC.lpfnWndProc = wnd_proc;
-	sWC.cbClsExtra = 0;
-	sWC.cbWndExtra = 0;
-	sWC.hInstance = 0;
-	sWC.hIcon = 0;
-	sWC.hCursor = LoadCursor(NULL, IDC_ARROW);
-	sWC.lpszMenuName = 0;
-	sWC.hbrBackground = 0;
-	sWC.lpszClassName = "RenderFrame";
-	ATOM register_class = RegisterClass(&sWC);
+	WNDCLASS swc;
+	ATOM register_class;
+	RECT rect;
+	HDC hdc;
+
+	swc.style = CS_HREDRAW | CS_VREDRAW;
+	swc.lpfnWndProc = wnd_proc;
+	swc.cbClsExtra = 0;
+	swc.cbWndExtra = 0;
+	swc.hInstance = 0;
+	swc.hIcon = 0;
+	swc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	swc.lpszMenuName = 0;
+	swc.hbrBackground = 0;
+	swc.lpszClassName = "RenderFrame";
+
+	register_class = RegisterClass(&swc);
 
 	if (!register_class)
 		return SWLR_ERROR_PLATFORM_WINAPI_REGISTER_CLASS;
 
-	RECT rect;
-	
 	SetRect(&rect, 0, 0, width, height);
 	
 	AdjustWindowRectEx(&rect, WS_CAPTION | WS_VISIBLE | WS_SYSMENU, false, 0);
@@ -165,12 +168,12 @@ enum swl_result swl_platform_allocate(const char *title, unsigned int width, uns
 	if(window_handle == 0)
 		return SWLR_ERROR_PLATFORM_WINAPI_HANDLE;
 	
-	HDC hDC = GetDC(window_handle);
+	hdc = GetDC(window_handle);
 	
-	if (!hDC)
+	if (!hdc)
 		return SWLR_ERROR_PLATFORM_WINAPI_DEVICE;
 
-	*display = eglGetDisplay(hDC);
+	*display = eglGetDisplay(hdc);
 	*handle = window_handle;
 	
 	return SWLR_OK;
