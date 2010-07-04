@@ -29,5 +29,4 @@ echo "" > $MAKE_FEATURES
 
 (output_option SWL_BACKEND_WINAPI $(test_header "windows.h")) ||
 (output_option SWL_BACKEND_XLIB $(test_header "X11/Xlib.h")) ||
-(output_option SWL_BACKEND_SDL $(test_header "SDL/SDL.h")) ||
 (echo "Unable to find a suitable backend for SWL!"; exit 1)

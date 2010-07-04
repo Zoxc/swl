@@ -21,12 +21,12 @@ extern "C" {
 	#define SWL_API
 #endif
 
-#ifdef SWL_BACKEND_SDL
-	#include "swl-sdl.h"
-#endif
-
 #ifdef SWL_BACKEND_WINAPI
 	#include "swl-winapi.h"
+#endif
+
+#ifdef SWL_BACKEND_XLIB
+	#include "swl-xlib.h"
 #endif
 
 enum swl_result
@@ -36,7 +36,8 @@ enum swl_result
 	SWLR_ERROR_SURFACE_CREATION,
 	SWLR_ERROR_CONTEXT_CREATION,
 	SWLR_ERROR_EGL_CREATION,
-	SWLR_ERROR_EGL_CONFIG
+	SWLR_ERROR_EGL_CONFIG,
+	SWLR_ERROR_EGL_ERROR
 };
 
 #define SWLR_PLATFORM(index) ((enum swl_result)(1000 + index))
