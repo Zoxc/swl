@@ -1,0 +1,18 @@
+include $(root)/swl/Makefile.conf
+
+LIBS += swl EGL
+
+ifeq ($(SWL_BACKEND_XLIB),1)
+LIBS += X11
+endif
+
+.PHONY: swl 
+swl:
+	$(MAKE) -C $(root)/swl
+
+.PHONY: swl-clean
+swl-clean:
+	$(MAKE) -C $(root)/swl clean
+
+INCLUDE_DIRS += $(root)/swl
+LIB_DIRS += $(root)/swl

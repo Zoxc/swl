@@ -4,7 +4,7 @@ echo "Configuring SWL..."
 
 CC=${CROSS_COMPILE}gcc
 C_FEATURES=swl-features.h
-MAKE_FEATURES=Makefile.features
+MAKE_FEATURES=Makefile.conf
 
 function test_code {
 	((echo $1 | ${CC} -fsyntax-only -x c - &> /dev/null) && echo 1) || echo 0

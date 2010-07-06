@@ -1,6 +1,7 @@
 root=..
-include ../Makefile.common
-include Makefile.features
+default: all
+include $(root)/Makefile.common
+include Makefile.conf
 
 TARGET = $(CFG)/libswl.a
 
@@ -18,10 +19,6 @@ endif
 
 OBJECTS = $(patsubst %.c, $(CFG)/%.o, $(SOURCES) )
 
-.PHONY: build-dir 
-build-dir:
-	@mkdir -p $(CFG)
-
 $(TARGET): $(OBJECTS)
 	@$(AR) rsc $@ $(OBJECTS)
 
@@ -29,4 +26,4 @@ $(TARGET): $(OBJECTS)
 clean:
 	@rm -f $(OBJECTS) $(TARGET)
 
-all: build-dir $(TARGET)
+all: build-dirs $(TARGET)
