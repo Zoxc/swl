@@ -1,7 +1,7 @@
 #include <EGL/egl.h>
 #include "swl.h"
 
-enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, EGLNativeWindowType *handle, EGLDisplay *display);
+enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, bool resizable, EGLNativeWindowType *handle, EGLDisplay *display);
 void swl_platform_deallocate(void);
 
 static struct {
@@ -11,6 +11,7 @@ static struct {
 	const char *title;
 	unsigned int width;
 	unsigned int height;
+	bool resizable;
 	
 	/*
 	 * EGL stuff
@@ -40,7 +41,7 @@ static enum swl_result swl_allocate(void)
 	swl.egl_surface = EGL_NO_SURFACE;
 	swl.egl_context = EGL_NO_CONTEXT;
 	
-	result = swl_platform_allocate(swl.title, swl.width, swl.height, &swl.egl_handle, &swl.egl_display);
+	result = swl_platform_allocate(swl.title, swl.width, swl.height, swl.resizable, &swl.egl_handle, &swl.egl_display);
 	
 	if(result != SWLR_OK)
 		return result;
@@ -93,13 +94,14 @@ static void swl_deallocate(void)
 	swl_platform_deallocate();
 }
 
-enum swl_result SWL_API swl_init(const char *title, unsigned int width, unsigned int height)
+enum swl_result SWL_API swl_init(const char *title, unsigned int width, unsigned int height, bool resizable)
 {
 	enum swl_result result;
 
 	swl.title = title;
 	swl.width = width;
 	swl.height = height;
+	swl.resizable = resizable;
 	
 	result = swl_allocate();
 	

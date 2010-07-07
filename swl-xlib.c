@@ -87,7 +87,7 @@ bool SWL_API swl_wait(struct swl_event *event)
 	return true;
 }
 
-enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, EGLNativeWindowType *handle, EGLDisplay *display)
+enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, bool resizable, EGLNativeWindowType *handle, EGLDisplay *display)
 {
 	XSetWindowAttributes swa;
 	unsigned int mask;

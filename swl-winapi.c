@@ -18,6 +18,12 @@ static bool process_message(struct swl_event *event, MSG *msg)
 		
 	switch(msg->message)
 	{
+		case WM_USER:
+			event->type = SWLE_RESIZE;
+			event->size_event.width = msg->wParam;
+			event->size_event.height = msg->lParam;
+			break;
+
 		case WM_KEYDOWN:
 			event->type = SWLE_KEYDOWN;
 			event->key_event.key = (swl_key_t)msg->wParam;
@@ -124,6 +130,10 @@ static LRESULT CALLBACK wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 			ReleaseCapture();
 			break;
 
+		case WM_SIZE:
+			PostMessage(hWnd, WM_USER, LOWORD(lParam), HIWORD(lParam));
+			return 0;
+
 		case WM_CLOSE:
 			PostQuitMessage(0);
 			return 1;
@@ -136,14 +146,18 @@ static LRESULT CALLBACK wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, EGLNativeWindowType *handle, EGLDisplay *display)
+enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, bool resizable, EGLNativeWindowType *handle, EGLDisplay *display)
 {
 	WNDCLASS swc;
 	ATOM register_class;
 	RECT rect;
 	HDC hdc;
+	DWORD style = WS_CAPTION | WS_VISIBLE | WS_SYSMENU;
 
-	swc.style = CS_HREDRAW | CS_VREDRAW;
+	if(resizable)
+		style |= WS_SIZEBOX;
+
+	swc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 	swc.lpfnWndProc = wnd_proc;
 	swc.cbClsExtra = 0;
 	swc.cbWndExtra = 0;
@@ -161,9 +175,9 @@ enum swl_result swl_platform_allocate(const char *title, unsigned int width, uns
 
 	SetRect(&rect, 0, 0, width, height);
 	
-	AdjustWindowRectEx(&rect, WS_CAPTION | WS_VISIBLE | WS_SYSMENU, false, 0);
+	AdjustWindowRectEx(&rect, style, false, 0);
 	
-	window_handle = CreateWindow("RenderFrame", title, WS_CAPTION | WS_VISIBLE | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, rect.right - rect.left, rect.bottom - rect.top, 0, 0, 0, 0);
+	window_handle = CreateWindow("RenderFrame", title, style, CW_USEDEFAULT, CW_USEDEFAULT, rect.right - rect.left, rect.bottom - rect.top, 0, 0, 0, 0);
 	
 	if(window_handle == 0)
 		return SWLR_ERROR_PLATFORM_WINAPI_HANDLE;

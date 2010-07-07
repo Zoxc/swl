@@ -55,6 +55,7 @@ enum swl_event_type
 	SWLE_MOUSEUP,
 	SWLE_MOUSEDOWN,
 	SWLE_MOUSEMOVE,
+	SWLE_RESIZE,
 	SWLE_QUIT
 };
 
@@ -69,6 +70,12 @@ struct swl_mouse_event
 	int y;
 };
 
+struct swl_size_event
+{
+	int width;
+	int height;
+};
+
 struct swl_event
 {
 	enum swl_event_type type;
@@ -76,10 +83,11 @@ struct swl_event
 	{
 		struct swl_key_event key_event;
 		struct swl_mouse_event mouse_event;
+		struct swl_size_event size_event;
 	};
 };
 
-enum swl_result SWL_API swl_init(const char *title, unsigned int width, unsigned int height);
+enum swl_result SWL_API swl_init(const char *title, unsigned int width, unsigned int height, bool resizable);
 void SWL_API swl_quit(void);
 void SWL_API swl_swap(void);
 bool SWL_API swl_query(struct swl_event *event);
