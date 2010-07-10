@@ -27,6 +27,9 @@ extern "C" {
 	#define SWL_API
 #endif
 
+#define SWLR_BACKEND(index) ((enum swl_result)(1000 + index))
+#define SWLR_CONTEXT(index) ((enum swl_result)(2000 + index))
+
 #ifdef SWL_BACKEND_WINAPI
 	#include "swl-winapi.h"
 #endif
@@ -35,18 +38,26 @@ extern "C" {
 	#include "swl-xlib.h"
 #endif
 
+#ifdef SWL_CONTEXT_EGL
+	#include "swl-egl.h"
+#endif
+
+#ifdef SWL_CONTEXT_WGL
+	#include "swl-wgl.h"
+#endif
+
+#ifdef SWL_OPENGL_ES
+	#include <GLES2/gl2.h>
+	#include <GLES2/gl2ext.h>
+#else
+	#include <GL/glew.h>
+#endif
+
 enum swl_result
 {
 	SWLR_OK,
-	SWLR_ERROR_DISPLAY_CREATION,
-	SWLR_ERROR_SURFACE_CREATION,
-	SWLR_ERROR_CONTEXT_CREATION,
-	SWLR_ERROR_EGL_CREATION,
-	SWLR_ERROR_EGL_CONFIG,
-	SWLR_ERROR_EGL_ERROR
+	SWLR_ERROR_GLEW_ERROR
 };
-
-#define SWLR_PLATFORM(index) ((enum swl_result)(1000 + index))
 
 enum swl_event_type
 {

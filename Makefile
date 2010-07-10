@@ -1,7 +1,7 @@
 root=..
 default: all
 include $(root)/Makefile.common
-include Makefile.conf
+include Makefile.shared
 
 TARGET = $(CFG)/libswl.a
 
@@ -15,6 +15,14 @@ endif
 
 ifeq ($(SWL_BACKEND_XLIB),1)
 SOURCES += swl-xlib.c
+endif
+
+ifeq ($(SWL_CONTEXT_EGL),1)
+SOURCES += swl-egl.c
+endif
+
+ifeq ($(SWL_CONTEXT_WGL),1)
+SOURCES += swl-wgl.c
 endif
 
 OBJECTS = $(patsubst %.c, $(CFG)/%.o, $(SOURCES) )

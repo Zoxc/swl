@@ -1,10 +1,4 @@
-include $(root)/swl/Makefile.conf
-
-LIBS += swl EGL
-
-ifeq ($(SWL_BACKEND_XLIB),1)
-LIBS += X11
-endif
+include $(root)/swl/Makefile.shared
 
 .PHONY: swl 
 swl:

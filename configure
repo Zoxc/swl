@@ -18,6 +18,7 @@ function output_option {
 	if [[ "$2" == "1" ]]; then
 		echo "#define $1" >> $C_FEATURES
 		echo "$1=1" >> $MAKE_FEATURES
+		eval $3
 		return 0
 	else
 		return 1;
@@ -27,6 +28,30 @@ function output_option {
 echo "" > $C_FEATURES
 echo "" > $MAKE_FEATURES
 
-(output_option SWL_BACKEND_WINAPI $(test_header "windows.h")) ||
-(output_option SWL_BACKEND_XLIB $(test_header "X11/Xlib.h")) ||
-(echo "Unable to find a suitable backend for SWL!"; exit 1)
+output_option SWL_BACKEND_WINAPI $(test_header "windows.h") backend=WINAPI ||
+output_option SWL_BACKEND_XLIB $(test_header "X11/Xlib.h") backend=XLIB ||
+(echo "Unable to find a suitable window backend for SWL!"; exit 1)
+
+context=EGL
+opengl=GLES
+
+until [ -z "$1" ]; do
+	case $1 in
+		"--enable-gl") shift; opengl=GL;;
+		"--enable-egl") shift; context=EGL;;
+		"--enable-wgl") shift; opengl=GL; context=WGL;;
+		*) echo "Unknown command line option: '$1'"; shift;;
+	esac
+done
+
+output_option "SWL_CONTEXT_${context}" 1
+
+if [[ "$opengl" == "GL" ]]; then
+	output_option "SWL_OPENGL" 1
+else
+	output_option "SWL_OPENGL_ES" 1
+fi
+
+echo "Using window backend: $backend"
+echo "Using context backend: $context"
+echo "Using OpenGL version: $opengl"

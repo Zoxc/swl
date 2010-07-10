@@ -4,7 +4,7 @@
 #include "swl.h"
 
 static Window x11_window;
-static Display* x11_display;
+static Display *x11_display;
 static XVisualInfo x11_visual;
 static Colormap x11_colormap;
 static Atom wm_delete_message;
@@ -87,7 +87,7 @@ bool SWL_API swl_wait(struct swl_event *event)
 	return true;
 }
 
-enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, bool resizable, EGLNativeWindowType *handle, EGLDisplay *display)
+enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, bool resizable, swl_window_t *window, swl_display_t *display)
 {
 	XSetWindowAttributes swa;
 	unsigned int mask;
@@ -126,8 +126,8 @@ enum swl_result swl_platform_allocate(const char *title, unsigned int width, uns
 
 	XFlush(x11_display);
 
-	*handle = (EGLNativeWindowType)x11_window;
-	*display = eglGetDisplay((EGLNativeDisplayType)x11_display);
+	*window = x11_window;
+	*display = x11_display;
 	
 	return SWLR_OK;
 }

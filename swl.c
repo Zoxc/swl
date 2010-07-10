@@ -1,8 +1,14 @@
-#include <EGL/egl.h>
 #include "swl.h"
+#ifdef SWL_OPENGL
+	#include <GL/glew.h>
+#endif
 
-enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, bool resizable, EGLNativeWindowType *handle, EGLDisplay *display);
+enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, bool resizable, swl_window_t *window, swl_display_t *display);
 void swl_platform_deallocate(void);
+
+enum swl_result swl_context_allocate(swl_window_t window, swl_display_t display);
+void swl_context_deallocate(void);
+void swl_context_swap(void);
 
 static struct {
 	/*
@@ -12,85 +18,30 @@ static struct {
 	unsigned int width;
 	unsigned int height;
 	bool resizable;
-	
-	/*
-	 * EGL stuff
-	 */
-	EGLDisplay egl_display;
-	EGLConfig egl_config;
-	EGLSurface egl_surface;
-	EGLContext egl_context;
-	EGLNativeWindowType egl_handle;
+	swl_window_t window;
+	swl_display_t display;
 } swl;
 
 static enum swl_result swl_allocate(void)
 {
-	enum swl_result result;
-	EGLint major_version, minor_version;
-	
-	const EGLint config_attributes[] = {
-		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-		EGL_NONE};
-		
-	int configs;
-
-	EGLint context_attributes[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
-
-	swl.egl_display = EGL_NO_DISPLAY;
-	swl.egl_surface = EGL_NO_SURFACE;
-	swl.egl_context = EGL_NO_CONTEXT;
-	
-	result = swl_platform_allocate(swl.title, swl.width, swl.height, swl.resizable, &swl.egl_handle, &swl.egl_display);
+	enum swl_result result = swl_platform_allocate(swl.title, swl.width, swl.height, swl.resizable, &swl.window, &swl.display);
 	
 	if(result != SWLR_OK)
 		return result;
-
-	if(swl.egl_display == EGL_NO_DISPLAY)
-	{
-		swl.egl_display = eglGetDisplay((EGLNativeDisplayType)EGL_DEFAULT_DISPLAY);
-		
-		if(swl.egl_display == EGL_NO_DISPLAY)
-			return SWLR_ERROR_DISPLAY_CREATION;
-	}
-
-	if (!eglInitialize(swl.egl_display, &major_version, &minor_version))
-		return SWLR_ERROR_EGL_CREATION;
-
-	if (!eglChooseConfig(swl.egl_display, config_attributes, &swl.egl_config, 1, &configs) || (configs != 1))
-		return SWLR_ERROR_EGL_CONFIG;
-
-	swl.egl_surface = eglCreateWindowSurface(swl.egl_display, swl.egl_config, swl.egl_handle, NULL);
-
-	if(swl.egl_surface == EGL_NO_SURFACE)
-	{
-		swl.egl_surface = eglCreateWindowSurface(swl.egl_display, swl.egl_config, NULL, NULL);
-		
-		if(swl.egl_surface == EGL_NO_SURFACE)
-			return SWLR_ERROR_SURFACE_CREATION;
-	}
-
-	swl.egl_context = eglCreateContext(swl.egl_display, swl.egl_config, NULL, context_attributes);
 	
-	if(swl.egl_context == EGL_NO_CONTEXT)
-			return SWLR_ERROR_CONTEXT_CREATION;
+	result = swl_context_allocate(swl.window, swl.display); 
 
-	eglMakeCurrent(swl.egl_display, swl.egl_surface, swl.egl_surface, swl.egl_context);
+	#ifdef SWL_OPENGL
+		if(glewInit() != GLEW_OK)
+			return SWLR_ERROR_GLEW_ERROR;
+	#endif
 	
-	if(eglGetError() != EGL_SUCCESS)
-		return SWLR_ERROR_EGL_ERROR;
-	else
-		return SWLR_OK;
+	return result;
 }
 
 static void swl_deallocate(void)
 {
-	if(swl.egl_display != EGL_NO_DISPLAY)
-	{
-		eglMakeCurrent(swl.egl_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-		eglTerminate(swl.egl_display);
-	}
-
+	swl_context_deallocate();
 	swl_platform_deallocate();
 }
 
@@ -118,5 +69,5 @@ void SWL_API swl_quit(void)
 
 void SWL_API swl_swap()
 {
-	eglSwapBuffers(swl.egl_display, swl.egl_surface);
+	swl_context_swap();
 }

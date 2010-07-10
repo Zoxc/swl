@@ -146,7 +146,7 @@ static LRESULT CALLBACK wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, bool resizable, EGLNativeWindowType *handle, EGLDisplay *display)
+enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, bool resizable, swl_window_t *window, swl_display_t *display)
 {
 	WNDCLASS swc;
 	ATOM register_class;
@@ -171,7 +171,7 @@ enum swl_result swl_platform_allocate(const char *title, unsigned int width, uns
 	register_class = RegisterClass(&swc);
 
 	if (!register_class)
-		return SWLR_ERROR_PLATFORM_WINAPI_REGISTER_CLASS;
+		return SWLR_ERROR_BACKEND_WINAPI_REGISTER_CLASS;
 
 	SetRect(&rect, 0, 0, width, height);
 	
@@ -180,15 +180,15 @@ enum swl_result swl_platform_allocate(const char *title, unsigned int width, uns
 	window_handle = CreateWindow("RenderFrame", title, style, CW_USEDEFAULT, CW_USEDEFAULT, rect.right - rect.left, rect.bottom - rect.top, 0, 0, 0, 0);
 	
 	if(window_handle == 0)
-		return SWLR_ERROR_PLATFORM_WINAPI_HANDLE;
+		return SWLR_ERROR_BACKEND_WINAPI_HANDLE;
 	
 	hdc = GetDC(window_handle);
 	
 	if (!hdc)
-		return SWLR_ERROR_PLATFORM_WINAPI_DEVICE;
+		return SWLR_ERROR_BACKEND_WINAPI_DEVICE;
 
-	*display = eglGetDisplay(hdc);
-	*handle = window_handle;
+	*display = hdc;
+	*window = window_handle;
 	
 	return SWLR_OK;
 }
