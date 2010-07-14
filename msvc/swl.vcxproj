@@ -70,10 +70,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\swl-egl.c" />
     <ClCompile Include="..\swl-winapi.c" />
     <ClCompile Include="..\swl.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\swl-egl.h" />
     <ClInclude Include="..\swl-features.h" />
     <ClInclude Include="..\swl-winapi.h" />
     <ClInclude Include="..\swl.h" />
