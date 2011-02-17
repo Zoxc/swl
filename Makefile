@@ -32,6 +32,6 @@ $(TARGET): $(OBJECTS)
 
 .PHONY: clean 
 clean:
-	@rm -f $(OBJECTS) $(TARGET)
+	@rm -f $(OBJECTS) $(TARGET) swl-features.h Makefile.conf
 
 all: build-dirs $(TARGET)
