@@ -25,7 +25,7 @@ enum swl_result swl_context_allocate(swl_window_t window, swl_display_t display)
 	
 	if(egl_display == EGL_NO_DISPLAY)
 	{
-		egl_display = eglGetDisplay((EGLNativeDisplayType)EGL_DEFAULT_DISPLAY);
+		egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 		
 		if(egl_display == EGL_NO_DISPLAY)
 			return SWLR_ERROR_CONTEXT_EGL_DISPLAY_CREATION;

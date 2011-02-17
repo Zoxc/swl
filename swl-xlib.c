@@ -1,7 +1,6 @@
 #include <EGL/egl.h>
-#include "X11/Xlib.h"
-#include "X11/Xutil.h"
 #include "swl.h"
+#include "X11/Xutil.h"
 
 static Window x11_window;
 static Display *x11_display;
@@ -97,14 +96,14 @@ enum swl_result swl_platform_allocate(const char *title, unsigned int width, uns
 	x11_display = XOpenDisplay(0);
 
 	if (!x11_display)
-		return SWLR_ERROR_PLATFORM_XLIB_DISPLAY;
+		return SWLR_ERROR_BACKEND_XLIB_DISPLAY;
 	
 	x11_screen = XDefaultScreen(x11_display);
 
 	depth = DefaultDepth(x11_display, x11_screen);
 	
 	if(!XMatchVisualInfo(x11_display, x11_screen, depth, TrueColor, &x11_visual))
-		return SWLR_ERROR_PLATFORM_XLIB_VISUAL;
+		return SWLR_ERROR_BACKEND_XLIB_VISUAL;
 
 	x11_colormap = XCreateColormap(x11_display, RootWindow(x11_display, x11_screen), x11_visual.visual, AllocNone);
 
