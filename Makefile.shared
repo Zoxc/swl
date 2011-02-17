@@ -1,4 +1,4 @@
-include $(root)/swl/Makefile.conf
+-include $(root)/swl/Makefile.conf
 
 LIBS += swl
 
