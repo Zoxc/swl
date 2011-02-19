@@ -1,5 +1,5 @@
-#include <EGL/egl.h>
 #include "swl.h"
+#include <EGL/egl.h>
 
 static EGLDisplay egl_display = EGL_NO_DISPLAY;
 static EGLSurface egl_surface = EGL_NO_SURFACE;
@@ -40,13 +40,8 @@ enum swl_result swl_context_allocate(swl_window_t window, swl_display_t display)
 	egl_surface = eglCreateWindowSurface(egl_display, egl_config, window, NULL);
 
 	if(egl_surface == EGL_NO_SURFACE)
-	{
-		egl_surface = eglCreateWindowSurface(egl_display, egl_config, NULL, NULL);
-		
-		if(egl_surface == EGL_NO_SURFACE)
-			return SWLR_ERROR_CONTEXT_EGL_SURFACE_CREATION;
-	}
-
+		return SWLR_ERROR_CONTEXT_EGL_SURFACE_CREATION;
+	
 	egl_context = eglCreateContext(egl_display, egl_config, NULL, context_attributes);
 	
 	if(egl_context == EGL_NO_CONTEXT)

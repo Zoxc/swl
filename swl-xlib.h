@@ -5,6 +5,9 @@
 typedef Window swl_window_t;
 typedef Display *swl_display_t;
 
+// Define for EGL support
+#define SUPPORT_X11
+
 /*
  * Key type definition
  */
