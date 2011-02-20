@@ -48,6 +48,7 @@ static bool process_event(struct swl_event *event, XEvent *x11_event)
 			break;
 
 		default:
+			return false;
 			break;
 	}
 	
