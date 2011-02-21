@@ -16,7 +16,7 @@ enum swl_result swl_context_allocate(swl_window_t window, swl_display_t display)
 		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
 		EGL_NONE};
 		
-	int configs;
+	EGLint configs;
 
 	EGLint context_attributes[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
 
