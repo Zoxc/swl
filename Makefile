@@ -76,10 +76,9 @@ clean:
 
 .PHONY: install 
 install: $(TARGET)
-	echo $(HEADERS)
 	@mkdir -p $(INSTALL_PREFIX)/include $(INSTALL_PREFIX)/lib
-	cp $(CFG)/libswl$(LIB_EXT) $(INSTALL_PREFIX)/lib
-	cp $(HEADERS) $(INSTALL_PREFIX)/include
+	@cp -f $(CFG)/libswl$(LIB_EXT) $(INSTALL_PREFIX)/lib
+	@cp -f $(HEADERS) $(INSTALL_PREFIX)/include
 
 all: $(TARGET)
 
