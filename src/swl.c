@@ -3,11 +3,6 @@
 	#include <GL/glew.h>
 #endif
 
-enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, bool resizable, swl_window_t *window, swl_display_t *display);
-void swl_platform_deallocate(void);
-
-enum swl_result swl_context_allocate(swl_window_t window, swl_display_t display);
-void swl_context_deallocate(void);
 void swl_context_swap(void);
 
 static struct {
@@ -30,11 +25,6 @@ static enum swl_result swl_allocate(void)
 		return result;
 	
 	result = swl_context_allocate(swl.window, swl.display); 
-
-	#ifdef SWL_OPENGL
-		if(glewInit() != GLEW_OK)
-			return SWLR_ERROR_GLEW_ERROR;
-	#endif
 	
 	return result;
 }

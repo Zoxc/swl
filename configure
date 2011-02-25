@@ -2,9 +2,63 @@
 
 echo "Configuring SWL..."
 
-CC=${CROSS_COMPILE}gcc
-C_FEATURES=swl-features.h
-MAKE_FEATURES=Makefile.conf
+backend=none
+context=EGL
+prefix=/usr
+host=
+cfg=release
+lib_extension=
+
+# Parse command line parameters
+
+function check_arg {
+	if [[ "${arg}+" == "+" ]]; then
+		echo "Parameter $cmd requires an argument."; 
+		exit 1
+	fi
+}
+
+until [ -z "$1" ]; do
+	index=`expr index "$1" =`
+	arg=
+	if [[ "$index" == "0" ]]; then
+		cmd=$1
+	else
+		cmd=${1:0:$(expr $index - 1)}
+		arg=${1:$index}
+	fi
+	
+	shift; 
+	
+	case $cmd in
+		"--prefix") check_arg || exit 1; prefix="$arg";;
+		"--host") check_arg || exit 1; host="$arg";;
+		"--debug") cfg=debug;;
+		"--enable-egl") context=EGL;;
+		"--enable-wgl") context=WGL;;
+		*) echo "Unknown command line option: '$1'"; exit 1;;
+	esac
+done
+
+echo "Building $cfg configuration"
+
+if [[ "${host}+" == "+" ]]; then
+	echo " - Using default toolchain"
+else
+	echo " - Using toolchain: $host"
+	host=${host}-
+fi
+
+C_FEATURES=include/swl-features.h
+MAKE_FEATURES=Makefile.autoconf
+CC=${host}gcc
+
+echo "" > $C_FEATURES
+echo "" > $MAKE_FEATURES
+
+echo "INSTALL_PREFIX=$prefix" >> $MAKE_FEATURES
+echo "CROSS_COMPILE=$host" >> $MAKE_FEATURES
+echo "CFG=$cfg" >> $MAKE_FEATURES
 
 function test_code {
 	((echo $1 | ${CC} -fsyntax-only -x c - &> /dev/null) && echo 1) || echo 0
@@ -25,33 +79,22 @@ function output_option {
 	fi
 }
 
-echo "" > $C_FEATURES
-echo "" > $MAKE_FEATURES
-
-output_option SWL_BACKEND_WINAPI $(test_header "windows.h") backend=WINAPI ||
-output_option SWL_BACKEND_XLIB $(test_header "X11/Xlib.h") backend=XLIB ||
-(echo "Unable to find a suitable window backend for SWL!"; exit 1)
-
-context=EGL
-opengl=GLES
-
-until [ -z "$1" ]; do
-	case $1 in
-		"--enable-gl") shift; opengl=GL;;
-		"--enable-egl") shift; context=EGL;;
-		"--enable-wgl") shift; opengl=GL; context=WGL;;
-		*) echo "Unknown command line option: '$1'"; shift;;
-	esac
-done
-
-output_option "SWL_CONTEXT_${context}" 1
-
-if [[ "$opengl" == "GL" ]]; then
-	output_option "SWL_OPENGL" 1
-else
-	output_option "SWL_OPENGL_ES" 1
+if [[ $(test_code "#define TEST") == "0" ]]; then
+	echo "Unable to find a suitable C89 compiler to use!"; exit 1
 fi
 
-echo "Using window backend: $backend"
-echo "Using context backend: $context"
-echo "Using OpenGL version: $opengl"
+output_option SWL_BACKEND_WINAPI $(test_header "windows.h") "backend=WINAPI; lib_extension=.dll" ||
+output_option SWL_BACKEND_XLIB $(test_header "X11/Xlib.h") "backend=XLIB; lib_extension=.so"
+
+if [[ "$backend" == "none" ]]; then
+	echo "Unable to find a suitable window backend for SWL!"; exit 1
+fi
+
+output_option "SWL_CONTEXT_${context}" 1
+echo "LIB_EXT=$lib_extension" >> $MAKE_FEATURES
+
+echo " - Using window backend: $backend"
+echo " - Using context backend: $context"
+echo " - Installing in directory: $prefix"
+
+echo "Use make to build!"

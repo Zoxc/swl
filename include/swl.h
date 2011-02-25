@@ -46,17 +46,9 @@ extern "C" {
 	#include "swl-wgl.h"
 #endif
 
-#ifdef SWL_OPENGL_ES
-	#include <GLES2/gl2.h>
-	#include <GLES2/gl2ext.h>
-#else
-	#include <GL/glew.h>
-#endif
-
 enum swl_result
 {
-	SWLR_OK,
-	SWLR_ERROR_GLEW_ERROR
+	SWLR_OK
 };
 
 enum swl_event_type
@@ -97,6 +89,12 @@ struct swl_event
 		struct swl_size_event size_event;
 	};
 };
+
+enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, bool resizable, swl_window_t *window, swl_display_t *display);
+void swl_platform_deallocate(void);
+
+enum swl_result swl_context_allocate(swl_window_t window, swl_display_t display);
+void swl_context_deallocate(void);
 
 enum swl_result SWL_API swl_init(const char *title, unsigned int width, unsigned int height, bool resizable);
 void SWL_API swl_quit(void);

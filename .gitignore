@@ -1,0 +1,4 @@
+Makefile.*conf
+include/swl-features.h
+/release
+/debug

@@ -1,4 +1,3 @@
-#include <EGL/egl.h>
 #include <windows.h>
 #include "swl.h"
 
