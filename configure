@@ -93,6 +93,10 @@ fi
 output_option "SWL_CONTEXT_${context}" 1
 echo "LIB_EXT=$lib_extension" >> $MAKE_FEATURES
 
+if [[ "$lib_extension" == ".dll" ]]; then
+    echo "LDFLAGS += -Wl,--out-implib=$cfg/libswl.dll.a -Wl,--export-all-symbols" >> $MAKE_FEATURES
+fi
+
 echo " - Using window backend: $backend"
 echo " - Using context backend: $context"
 echo " - Installing in directory: $prefix"

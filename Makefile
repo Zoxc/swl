@@ -4,15 +4,12 @@ include Makefile.autoconf
 -include Makefile.conf
 
 CC = $(CROSS_COMPILE)gcc
-CXX = $(CROSS_COMPILE)g++
-AR = $(CROSS_COMPILE)ar
 
 BUILD_DIRS += .
-CFLAGS += -pipe -Wall
-CXXFLAGS += -Wno-invalid-offsetof -std=gnu++98
+CFLAGS += -pipe -Wall -fPIC
 
 ifeq ($(CFG),release)
-CFLAGS += -O3 -s
+CFLAGS += -O3 -s-fPIC
 else
 CFLAGS += -g
 CFG=debug
@@ -68,7 +65,7 @@ SOURCES += swl
 OBJECTS = $(patsubst %, $(CFG)/%.o, $(SOURCES) )
 
 $(TARGET): build-dirs $(OBJECTS)
-	@$(AR) rsc $@ $(OBJECTS)
+	$(CC) -shared -o $@ $(OBJECTS) $(LDFLAGS)
 
 .PHONY: clean 
 clean:
@@ -78,6 +75,9 @@ clean:
 install: $(TARGET)
 	@mkdir -p $(INSTALL_PREFIX)/include $(INSTALL_PREFIX)/lib
 	@cp -f $(CFG)/libswl$(LIB_EXT) $(INSTALL_PREFIX)/lib
+ifeq ($(LIB_EXT),.dll)
+	@cp -f $(CFG)/libswl$(LIB_EXT).a $(INSTALL_PREFIX)/lib
+endif
 	@cp -f $(HEADERS) $(INSTALL_PREFIX)/include
 
 all: $(TARGET)
