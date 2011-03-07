@@ -1,25 +1,22 @@
-#include "swl.h"
-#ifdef SWL_OPENGL
-	#include <GL/glew.h>
-#endif
+#include "swl-private.h"
 
 void swl_context_swap(void);
 
-static struct {
-	/*
-	 * Common stuff
-	 */
-	const char *title;
-	unsigned int width;
-	unsigned int height;
-	bool resizable;
-	swl_window_t window;
-	swl_display_t display;
-} swl;
+struct swl_data swl;
+
+SWL_API void SWL_API swl_set_resizable(bool resizable)
+{
+	swl.resizable = resizable;
+}
+
+SWL_API void swl_set_fullscreen(bool fullscreen)
+{
+	swl.fullscreen = fullscreen;
+}
 
 static enum swl_result swl_allocate(void)
 {
-	enum swl_result result = swl_platform_allocate(swl.title, swl.width, swl.height, swl.resizable, &swl.window, &swl.display);
+	enum swl_result result = swl_platform_allocate(swl.title, swl.width, swl.height, &swl.window, &swl.display);
 	
 	if(result != SWLR_OK)
 		return result;
@@ -35,14 +32,13 @@ static void swl_deallocate(void)
 	swl_platform_deallocate();
 }
 
-enum swl_result SWL_API swl_init(const char *title, unsigned int width, unsigned int height, bool resizable)
+SWL_API enum swl_result swl_init(const char *title, unsigned int width, unsigned int height)
 {
 	enum swl_result result;
 
 	swl.title = title;
 	swl.width = width;
 	swl.height = height;
-	swl.resizable = resizable;
 	
 	result = swl_allocate();
 	
@@ -52,12 +48,12 @@ enum swl_result SWL_API swl_init(const char *title, unsigned int width, unsigned
 	return result;
 }
 
-void SWL_API swl_quit(void)
+SWL_API void swl_quit(void)
 {
 	swl_deallocate();
 }
 
-void SWL_API swl_swap()
+SWL_API void swl_swap()
 {
 	swl_context_swap();
 }

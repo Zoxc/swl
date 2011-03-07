@@ -90,17 +90,20 @@ struct swl_event
 	};
 };
 
-enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, bool resizable, swl_window_t *window, swl_display_t *display);
-void swl_platform_deallocate(void);
+SWL_API enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, swl_window_t *window, swl_display_t *display);
+SWL_API void swl_platform_deallocate(void);
 
-enum swl_result swl_context_allocate(swl_window_t window, swl_display_t display);
-void swl_context_deallocate(void);
+SWL_API enum swl_result swl_context_allocate(swl_window_t window, swl_display_t display);
+SWL_API void swl_context_deallocate(void);
 
-enum swl_result SWL_API swl_init(const char *title, unsigned int width, unsigned int height, bool resizable);
-void SWL_API swl_quit(void);
-void SWL_API swl_swap(void);
-bool SWL_API swl_query(struct swl_event *event);
-bool SWL_API swl_wait(struct swl_event *event);
+SWL_API enum swl_result swl_init(const char *title, unsigned int width, unsigned int height);
+SWL_API void swl_set_resizable(bool resizable);
+SWL_API void swl_set_fullscreen(bool fullscreen);
+SWL_API void swl_quit(void);
+SWL_API void swl_swap(void);
+SWL_API bool swl_query(struct swl_event *event);
+SWL_API bool swl_wait(struct swl_event *event);
+SWL_API void *swl_get_function(const char *name);
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,5 @@
 #include <windows.h>
-#include "swl.h"
+#include "swl-private.h"
 
 static HWND window_handle = 0;
 static ATOM register_class = 0;
@@ -62,7 +62,7 @@ static bool process_message(struct swl_event *event, MSG *msg)
 	return true;
 }
 
-bool SWL_API swl_query(struct swl_event *event)
+SWL_API bool swl_query(struct swl_event *event)
 {
 	MSG msg;
 	
@@ -82,7 +82,7 @@ bool SWL_API swl_query(struct swl_event *event)
 	return false;
 }
 
-bool SWL_API swl_wait(struct swl_event *event)
+SWL_API bool swl_wait(struct swl_event *event)
 {
 	MSG msg;
 	
@@ -145,7 +145,7 @@ static LRESULT CALLBACK wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, bool resizable, swl_window_t *window, swl_display_t *display)
+SWL_API enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, swl_window_t *window, swl_display_t *display)
 {
 	WNDCLASS swc;
 	ATOM register_class;
@@ -153,7 +153,7 @@ enum swl_result swl_platform_allocate(const char *title, unsigned int width, uns
 	HDC hdc;
 	DWORD style = WS_CAPTION | WS_VISIBLE | WS_SYSMENU;
 
-	if(resizable)
+	if(swl.resizable)
 		style |= WS_SIZEBOX;
 
 	swc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
@@ -192,7 +192,7 @@ enum swl_result swl_platform_allocate(const char *title, unsigned int width, uns
 	return SWLR_OK;
 }
 
-void swl_platform_deallocate(void)
+SWL_API void swl_platform_deallocate(void)
 {
 	if(window_handle)
 		DestroyWindow(window_handle);

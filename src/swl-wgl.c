@@ -4,7 +4,7 @@
 static HGLRC wgl_rc;
 static HDC wgl_dc;
 
-enum swl_result swl_context_allocate(swl_window_t window, swl_display_t display)
+SWL_API enum swl_result swl_context_allocate(swl_window_t window, swl_display_t display)
 {
     PIXELFORMATDESCRIPTOR pfd;
 	int format;
@@ -32,12 +32,17 @@ enum swl_result swl_context_allocate(swl_window_t window, swl_display_t display)
 	return SWLR_OK;
 }
 
-void swl_context_deallocate(void)
+SWL_API void swl_context_deallocate(void)
 {
 	wglDeleteContext(wgl_rc);
 }
 
-void swl_context_swap(void)
+SWL_API void swl_context_swap(void)
 {
 	SwapBuffers(wgl_dc);
+}
+
+SWL_API void *swl_get_function(const char *name)
+{
+	return (void *)wglGetProcAddress(name);
 }

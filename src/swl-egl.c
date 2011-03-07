@@ -4,7 +4,7 @@
 static EGLDisplay egl_display = EGL_NO_DISPLAY;
 static EGLSurface egl_surface = EGL_NO_SURFACE;
 
-enum swl_result swl_context_allocate(swl_window_t window, swl_display_t display)
+SWL_API enum swl_result swl_context_allocate(swl_window_t window, swl_display_t display)
 {
 	EGLConfig egl_config;
 	EGLContext egl_context;
@@ -55,7 +55,7 @@ enum swl_result swl_context_allocate(swl_window_t window, swl_display_t display)
 		return SWLR_OK;
 }
 
-void swl_context_deallocate(void)
+SWL_API void swl_context_deallocate(void)
 {
 	if(egl_display != EGL_NO_DISPLAY)
 	{
@@ -64,7 +64,12 @@ void swl_context_deallocate(void)
 	}
 }
 
-void swl_context_swap(void)
+SWL_API void swl_context_swap(void)
 {
 	eglSwapBuffers(egl_display, egl_surface);
+}
+
+SWL_API void *swl_get_function(const char *name)
+{
+	return (void *)eglGetProcAddress(name);
 }

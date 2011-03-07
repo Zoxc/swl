@@ -55,7 +55,7 @@ static bool process_event(struct swl_event *event, XEvent *x11_event)
 	return true;
 }
 
-bool SWL_API swl_query(struct swl_event *event)
+SWL_API bool swl_query(struct swl_event *event)
 {
 	XEvent x11_event;
 	
@@ -72,7 +72,7 @@ bool SWL_API swl_query(struct swl_event *event)
 	return false;
 }
 
-bool SWL_API swl_wait(struct swl_event *event)
+SWL_API bool swl_wait(struct swl_event *event)
 {
 	XEvent x11_event;
 	
@@ -87,7 +87,7 @@ bool SWL_API swl_wait(struct swl_event *event)
 	return true;
 }
 
-enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, bool resizable, swl_window_t *window, swl_display_t *display)
+SWL_API enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, swl_window_t *window, swl_display_t *display)
 {
 	XSetWindowAttributes swa;
 	unsigned int mask;
@@ -132,7 +132,7 @@ enum swl_result swl_platform_allocate(const char *title, unsigned int width, uns
 	return SWLR_OK;
 }
 
-void swl_platform_deallocate(void)
+SWL_API void swl_platform_deallocate(void)
 {
 	if(x11_window)
 		XDestroyWindow(x11_display, x11_window);
