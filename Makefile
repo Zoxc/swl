@@ -9,7 +9,7 @@ BUILD_DIRS += .
 CFLAGS += -pipe -Wall -fPIC
 
 ifeq ($(CFG),release)
-CFLAGS += -O3 -s-fPIC
+CFLAGS += -O3 -s -fPIC
 else
 CFLAGS += -g
 CFG=debug
@@ -65,7 +65,7 @@ SOURCES += swl
 OBJECTS = $(patsubst %, $(CFG)/%.o, $(SOURCES) )
 
 $(TARGET): build-dirs $(OBJECTS)
-	$(CC) -shared -o $@ $(OBJECTS) $(LDFLAGS)
+	@$(CC) $(CFLAGS) -shared -o $@ $(OBJECTS) $(LDFLAGS)
 
 .PHONY: clean 
 clean:
