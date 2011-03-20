@@ -21,11 +21,11 @@ SWL_API enum swl_result swl_context_allocate(swl_window_t window, swl_display_t 
 	EGLint context_attributes[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
 
 	egl_context = EGL_NO_CONTEXT;
-	egl_display = eglGetDisplay(display);
+	egl_display = eglGetDisplay((EGLNativeDisplayType)display);
 	
 	if(egl_display == EGL_NO_DISPLAY)
 	{
-		egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+		egl_display = eglGetDisplay((EGLNativeDisplayType)EGL_DEFAULT_DISPLAY);
 		
 		if(egl_display == EGL_NO_DISPLAY)
 			return SWLR_ERROR_CONTEXT_EGL_DISPLAY_CREATION;
@@ -37,7 +37,7 @@ SWL_API enum swl_result swl_context_allocate(swl_window_t window, swl_display_t 
 	if (!eglChooseConfig(egl_display, config_attributes, &egl_config, 1, &configs) || (configs != 1))
 		return SWLR_ERROR_CONTEXT_EGL_CONFIG;
 
-	egl_surface = eglCreateWindowSurface(egl_display, egl_config, window, NULL);
+	egl_surface = eglCreateWindowSurface(egl_display, egl_config, (EGLNativeWindowType)window, NULL);
 
 	if(egl_surface == EGL_NO_SURFACE)
 		return SWLR_ERROR_CONTEXT_EGL_SURFACE_CREATION;
