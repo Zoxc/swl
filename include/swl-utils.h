@@ -1,5 +1,6 @@
 #pragma once
 #include "swl.h"
+#include "swl-features.h"
 
 #ifdef __cplusplus
 extern "C" {

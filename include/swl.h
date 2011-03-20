@@ -1,4 +1,6 @@
 #pragma once
+#include <stddef.h>
+
 #ifdef __cplusplus
 extern "C" {
 #else
@@ -11,7 +13,6 @@ extern "C" {
 #endif
 #endif
 
-#include "swl-features.h"
 
 #ifdef _MSC_VER
 	#ifdef SWL_BUILD_DLL
@@ -32,7 +33,8 @@ extern "C" {
 
 enum swl_result
 {
-	SWLR_OK
+	SWLR_OK,
+	SWLR_UNSUPPORTED
 };
 
 enum swl_event_type
@@ -84,9 +86,23 @@ struct swl_event
 	};
 };
 
+enum swl_configurable
+{
+	SWLC_FULLSCREEN,
+	SWLC_RESIZABLE,
+	SWLC_OPENGL_VERSION,
+	SWLC_DEPTH_SIZE,
+	SWLC_STENCIL_SIZE
+};
+
+enum swl_opengl_version
+{
+	SWLV_OPENGL_ES2,
+	SWLV_OPENGL_ES
+};
+
 SWL_API enum swl_result swl_init(const char *title, unsigned int width, unsigned int height);
-SWL_API void swl_set_resizable(bool resizable);
-SWL_API void swl_set_fullscreen(bool fullscreen);
+SWL_API enum swl_result swl_set_config(enum swl_configurable field, size_t value);
 SWL_API void swl_quit(void);
 SWL_API void swl_swap(void);
 SWL_API bool swl_query(struct swl_event *event);

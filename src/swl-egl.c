@@ -11,14 +11,48 @@ SWL_API enum swl_result swl_context_allocate(swl_window_t window, swl_display_t 
 	
 	EGLint major_version, minor_version;
 	
-	const EGLint config_attributes[] = {
-		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-		EGL_NONE};
-		
-	EGLint configs;
-
+	EGLint config_attributes[16];
+	
+	size_t config_index = 0;
+	
+	config_attributes[config_index++] = EGL_SURFACE_TYPE;
+	config_attributes[config_index++] = EGL_WINDOW_BIT;
+	
 	EGLint context_attributes[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
+
+	switch(swl.opengl_version)
+	{
+		case SWLV_OPENGL_ES2:
+			config_attributes[config_index++] = EGL_RENDERABLE_TYPE;
+			config_attributes[config_index++] = EGL_OPENGL_ES2_BIT;
+			context_attributes[2] = 2;
+			break;
+		
+		case SWLV_OPENGL_ES:
+			config_attributes[config_index++] = EGL_RENDERABLE_TYPE;
+			config_attributes[config_index++] = EGL_OPENGL_ES_BIT;
+			context_attributes[2] = 1;
+			break;
+			
+		default:
+			return SWLR_UNSUPPORTED;
+	}
+	
+	if(swl.depth_size)
+	{
+		config_attributes[config_index++] = EGL_DEPTH_SIZE;
+		config_attributes[config_index++] = swl.depth_size;
+	}
+	
+	if(swl.stencil_size)
+	{
+		config_attributes[config_index++] = EGL_STENCIL_SIZE;
+		config_attributes[config_index++] = swl.stencil_size;
+	}
+	
+	config_attributes[config_index++] = EGL_NONE;
+	
+	EGLint configs;
 
 	egl_context = EGL_NO_CONTEXT;
 	egl_display = eglGetDisplay((EGLNativeDisplayType)display);

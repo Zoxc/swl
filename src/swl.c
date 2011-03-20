@@ -4,7 +4,39 @@ void swl_context_swap(void);
 
 struct swl_data swl;
 
-SWL_API void SWL_API swl_set_resizable(bool resizable)
+SWL_API enum swl_result swl_set_config(enum swl_configurable field, size_t value)
+{
+	switch(field)
+	{
+		case SWLC_FULLSCREEN:
+			swl.fullscreen = value;
+			break;
+		
+		case SWLC_RESIZABLE:
+			swl.resizable = value;
+			break;
+		
+		case SWLC_OPENGL_VERSION:
+			swl.opengl_version = value;
+			break;
+		
+		case SWLC_DEPTH_SIZE:
+			swl.depth_size = value;
+			break;
+		
+		case SWLC_STENCIL_SIZE:
+			swl.stencil_size = value;
+			break;
+		
+		
+		default:
+			return SWLR_UNSUPPORTED;
+	}
+	
+	return SWLR_OK;
+}
+
+SWL_API void swl_set_resizable(bool resizable)
 {
 	swl.resizable = resizable;
 }

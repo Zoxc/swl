@@ -7,6 +7,9 @@ struct swl_data {
 	unsigned int height;
 	bool resizable;
 	bool fullscreen;
+	size_t opengl_version;
+	size_t depth_size;
+	size_t stencil_size;
 	swl_window_t window;
 	swl_display_t display;
 };
