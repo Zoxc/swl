@@ -30,22 +30,6 @@ extern "C" {
 #define SWLR_BACKEND(index) ((enum swl_result)(1000 + index))
 #define SWLR_CONTEXT(index) ((enum swl_result)(2000 + index))
 
-#ifdef SWL_BACKEND_WINAPI
-	#include "swl-winapi.h"
-#endif
-
-#ifdef SWL_BACKEND_XLIB
-	#include "swl-xlib.h"
-#endif
-
-#ifdef SWL_CONTEXT_EGL
-	#include "swl-egl.h"
-#endif
-
-#ifdef SWL_CONTEXT_WGL
-	#include "swl-wgl.h"
-#endif
-
 enum swl_result
 {
 	SWLR_OK
@@ -61,6 +45,16 @@ enum swl_event_type
 	SWLE_RESIZE,
 	SWLE_QUIT
 };
+
+typedef enum swl_key_type
+{
+	SWLK_UNKNOWN,
+	SWLK_UP,
+	SWLK_DOWN,
+	SWLK_LEFT,
+	SWLK_RIGHT,
+	SWLK_RETURN
+} swl_key_t;
 
 struct swl_key_event
 {
@@ -89,12 +83,6 @@ struct swl_event
 		struct swl_size_event size_event;
 	};
 };
-
-SWL_API enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, swl_window_t *window, swl_display_t *display);
-SWL_API void swl_platform_deallocate(void);
-
-SWL_API enum swl_result swl_context_allocate(swl_window_t window, swl_display_t display);
-SWL_API void swl_context_deallocate(void);
 
 SWL_API enum swl_result swl_init(const char *title, unsigned int width, unsigned int height);
 SWL_API void swl_set_resizable(bool resizable);

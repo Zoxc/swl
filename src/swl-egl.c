@@ -1,4 +1,4 @@
-#include "swl.h"
+#include "swl-private.h"
 #include <EGL/egl.h>
 
 static EGLDisplay egl_display = EGL_NO_DISPLAY;

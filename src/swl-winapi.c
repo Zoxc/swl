@@ -4,6 +4,30 @@
 static HWND window_handle = 0;
 static ATOM register_class = 0;
 
+static swl_key_t vk_to_swl(DWORD key)
+{
+	switch(key)
+	{
+		case VK_UP:
+			return SWLK_UP;
+		
+		case VK_DOWN:
+			return SWLK_DOWN;
+		
+		case VK_LEFT:
+			return SWLK_LEFT;
+		
+		case VK_RIGHT:
+			return SWLK_RIGHT;
+		
+		case VK_RETURN:
+			return SWLK_RETURN;
+			
+		default:
+			return SWLK_UNKNOWN;
+	}
+};
+
 static bool process_message(struct swl_event *event, MSG *msg)
 {
 	if(msg->message == WM_QUIT)
@@ -25,12 +49,12 @@ static bool process_message(struct swl_event *event, MSG *msg)
 
 		case WM_KEYDOWN:
 			event->type = SWLE_KEYDOWN;
-			event->key_event.key = (swl_key_t)msg->wParam;
+			event->key_event.key = vk_to_swl(msg->wParam);
 			break;
 
 		case WM_KEYUP:
 			event->type = SWLE_KEYUP;
-			event->key_event.key = (swl_key_t)msg->wParam;
+			event->key_event.key = vk_to_swl(msg->wParam);
 			break;
 
 		case WM_LBUTTONDOWN:
