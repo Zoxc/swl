@@ -1,6 +1,30 @@
 #include <EGL/egl.h>
-#include "swl.h"
+#include "swl-private.h"
 #include "X11/Xutil.h"
+
+static swl_key_t keysym_to_swl(KeySym key)
+{
+	switch(key)
+	{
+		case XK_Up:
+			return SWLK_UP;
+		
+		case XK_Down:
+			return SWLK_DOWN;
+		
+		case XK_Left:
+			return SWLK_LEFT;
+		
+		case XK_Right:
+			return SWLK_RIGHT;
+		
+		case XK_Return:
+			return SWLK_RETURN;
+			
+		default:
+			return SWLK_UNKNOWN;
+	}
+};
 
 static Window x11_window;
 static Display *x11_display;
@@ -14,12 +38,12 @@ static bool process_event(struct swl_event *event, XEvent *x11_event)
 	{
 		case KeyPress:
 			event->type = SWLE_KEYDOWN;
-			event->key_event.key = (swl_key_t)XLookupKeysym(&x11_event->xkey, 0);
+			event->key_event.key = keysym_to_swl(XLookupKeysym(&x11_event->xkey, 0));
 			break;
 
 		case KeyRelease:
 			event->type = SWLE_KEYUP;
-			event->key_event.key = (swl_key_t)XLookupKeysym(&x11_event->xkey, 0);
+			event->key_event.key = keysym_to_swl(XLookupKeysym(&x11_event->xkey, 0));
 			break;
 
 		case ButtonPress:

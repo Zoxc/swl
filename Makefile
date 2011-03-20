@@ -59,7 +59,8 @@ SOURCES += swl-wgl
 endif
 
 HEADERS = $(patsubst %, include/%.h, $(SOURCES) )
-HEADERS += include/swl-features.h
+HEADERS += include/swl-features.h \
+	include/swl-utils.h
 
 SOURCES += swl
 OBJECTS = $(patsubst %, $(CFG)/%.o, $(SOURCES) )

@@ -1,5 +1,5 @@
 #include <windows.h>
-#include "swl.h"
+#include "swl-private.h"
 
 static HGLRC wgl_rc;
 static HDC wgl_dc;
