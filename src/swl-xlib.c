@@ -1,5 +1,4 @@
-#include <EGL/egl.h>
-#include "swl.h"
+#include "swl-private.h"
 #include "X11/Xutil.h"
 
 static Window x11_window;
@@ -93,6 +92,9 @@ SWL_API enum swl_result swl_platform_allocate(const char *title, unsigned int wi
 	unsigned int mask;
 	int depth;
 	long x11_screen;
+	Atom wm_state;
+	Atom wm_fullscreen;
+	XEvent x_event;
 	
 	x11_display = XOpenDisplay(0);
 
@@ -125,6 +127,24 @@ SWL_API enum swl_result swl_platform_allocate(const char *title, unsigned int wi
 	XMapWindow(x11_display, x11_window);
 
 	XFlush(x11_display);
+
+	if(swl.fullscreen)
+	{
+		wm_state = XInternAtom(x11_display, "_NET_WM_STATE", False);
+		wm_fullscreen = XInternAtom(x11_display,"_NET_WM_STATE_FULLSCREEN", False);
+		
+		x_event.xclient.type = ClientMessage;
+		x_event.xclient.serial = 0;
+		x_event.xclient.send_event = True;
+		x_event.xclient.window = x11_window;
+		x_event.xclient.message_type = wm_state;
+		x_event.xclient.format = 32;
+		x_event.xclient.data.l[0] = 1;
+		x_event.xclient.data.l[1] = wm_fullscreen;
+		x_event.xclient.data.l[2] = 0;
+		
+		XSendEvent(x11_display, DefaultRootWindow(x11_display), False, SubstructureRedirectMask | SubstructureNotifyMask, &x_event);
+	}
 
 	*window = x11_window;
 	*display = x11_display;
