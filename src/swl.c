@@ -16,6 +16,10 @@ SWL_API enum swl_result swl_set_config(enum swl_configurable field, size_t value
 			swl.resizable = value;
 			break;
 		
+		case SWLC_CURSOR:
+			swl.cursor = value;
+			return swl_platform_update(field, value);
+		
 		case SWLC_OPENGL_VERSION:
 			swl.opengl_version = value;
 			break;
@@ -27,7 +31,6 @@ SWL_API enum swl_result swl_set_config(enum swl_configurable field, size_t value
 		case SWLC_STENCIL_SIZE:
 			swl.stencil_size = value;
 			break;
-		
 		
 		default:
 			return SWLR_UNSUPPORTED;

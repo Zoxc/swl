@@ -44,6 +44,7 @@ enum swl_event_type
 	SWLE_MOUSEUP,
 	SWLE_MOUSEDOWN,
 	SWLE_MOUSEMOVE,
+	SWLE_MOUSERAW,
 	SWLE_RESIZE,
 	SWLE_QUIT
 };
@@ -51,11 +52,18 @@ enum swl_event_type
 typedef enum swl_key_type
 {
 	SWLK_UNKNOWN,
+	SWLK_Q,
+	SWLK_W,
+	SWLK_E,
+	SWLK_A,
+	SWLK_S,
+	SWLK_D,
 	SWLK_UP,
 	SWLK_DOWN,
 	SWLK_LEFT,
 	SWLK_RIGHT,
-	SWLK_RETURN
+	SWLK_RETURN,
+	SWLK_ESCAPE
 } swl_key_t;
 
 struct swl_key_event
@@ -92,7 +100,8 @@ enum swl_configurable
 	SWLC_RESIZABLE,
 	SWLC_OPENGL_VERSION,
 	SWLC_DEPTH_SIZE,
-	SWLC_STENCIL_SIZE
+	SWLC_STENCIL_SIZE,
+	SWLC_CURSOR
 };
 
 enum swl_opengl_version

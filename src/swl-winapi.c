@@ -1,13 +1,65 @@
-#include <windows.h>
 #include "swl-private.h"
 
 static HWND window_handle = 0;
 static ATOM register_class = 0;
 
+static bool update_cursor()
+{
+	if(!swl.cursor)
+	{
+		RECT rect;
+		POINT top_left, bottom_right;
+		
+		if(GetClientRect(window_handle, &rect) == 0)
+			return false;
+		
+		top_left.x = rect.left;
+		top_left.y = rect.top;
+		
+		bottom_right.x = rect.right;
+		bottom_right.y = rect.bottom;
+		
+		if(ClientToScreen(window_handle, &top_left) == 0)
+			return false;
+		
+		if(ClientToScreen(window_handle, &bottom_right) == 0)
+			return false;
+		
+		rect.left = top_left.x;
+		rect.top = top_left.y;
+		
+		rect.right = bottom_right.x;
+		rect.bottom = bottom_right.y;
+		
+		if(ClipCursor(&rect) == 0)
+			return false;
+	}
+	
+	return true;
+}
+
 static swl_key_t vk_to_swl(DWORD key)
 {
 	switch(key)
 	{
+		case 'Q':
+			return SWLK_Q;
+		
+		case 'W':
+			return SWLK_W;
+		
+		case 'E':
+			return SWLK_E;
+		
+		case 'A':
+			return SWLK_A;
+		
+		case 'S':
+			return SWLK_S;
+		
+		case 'D':
+			return SWLK_D;
+		
 		case VK_UP:
 			return SWLK_UP;
 		
@@ -22,6 +74,9 @@ static swl_key_t vk_to_swl(DWORD key)
 		
 		case VK_RETURN:
 			return SWLK_RETURN;
+			
+		case VK_ESCAPE:
+			return SWLK_ESCAPE;
 			
 		default:
 			return SWLK_UNKNOWN;
@@ -45,6 +100,12 @@ static bool process_message(struct swl_event *event, MSG *msg)
 			event->type = SWLE_RESIZE;
 			event->size_event.width = msg->wParam;
 			event->size_event.height = msg->lParam;
+			break;
+
+		case WM_USER + 1:
+			event->type = SWLE_MOUSERAW;
+			event->mouse_event.x = (int)msg->wParam;
+			event->mouse_event.y = (int)msg->lParam;
 			break;
 
 		case WM_KEYDOWN:
@@ -132,6 +193,18 @@ static LRESULT CALLBACK wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 {
 	switch (message)
 	{
+		case WM_INPUT:
+            {
+                RAWINPUT input;
+				
+                UINT size = sizeof(input);
+				
+                GetRawInputData((HRAWINPUT)lParam, RID_INPUT, &input, &size, sizeof(input.header));
+				
+				PostMessage(hWnd, WM_USER + 1, input.data.mouse.lLastX, input.data.mouse.lLastY);
+            }
+			break;
+			
 		case WM_SYSCOMMAND:
 			switch (wParam)
 			{
@@ -167,6 +240,30 @@ static LRESULT CALLBACK wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	}
 
 	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+enum swl_result swl_platform_update(enum swl_configurable field, size_t value)
+{
+	switch(field)
+	{
+		case SWLC_CURSOR:
+			{
+				if(value)
+				{
+					ShowCursor(TRUE);
+					ClipCursor(0);
+					return SWLR_OK;
+				}
+				else
+				{
+					ShowCursor(FALSE);
+					return update_cursor();
+				}
+			}
+		
+		default:
+			return SWLR_UNSUPPORTED;
+	}
 }
 
 SWL_API enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, swl_window_t *window, swl_display_t *display)
@@ -212,6 +309,15 @@ SWL_API enum swl_result swl_platform_allocate(const char *title, unsigned int wi
 
 	*display = hdc;
 	*window = window_handle;
+	
+	RAWINPUTDEVICE mouse;
+	mouse.usUsagePage = 1;
+	mouse.usUsage = 2;
+	mouse.dwFlags = 0;
+	mouse.hwndTarget = window_handle;
+	
+	if(RegisterRawInputDevices(&mouse, 1, sizeof(mouse)) == FALSE)
+		return SWLR_ERROR_BACKEND_WINAPI_RAW_INPUT;
 	
 	return SWLR_OK;
 }

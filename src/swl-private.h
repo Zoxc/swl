@@ -6,6 +6,7 @@ struct swl_data {
 	unsigned int width;
 	unsigned int height;
 	bool resizable;
+	bool cursor;
 	bool fullscreen;
 	size_t opengl_version;
 	size_t depth_size;
@@ -15,3 +16,5 @@ struct swl_data {
 };
 
 extern struct swl_data swl;
+
+enum swl_result swl_platform_update(enum swl_configurable field, size_t value);

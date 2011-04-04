@@ -3,7 +3,8 @@
 	#define NOMINMAX
 #endif
 #define WIN32_LEAN_AND_MEAN
-#include "windows.h"	
+#define WINVER 0x0502
+#include "windows.h"
 
 typedef HWND swl_window_t;
 typedef HDC swl_display_t;
@@ -11,3 +12,4 @@ typedef HDC swl_display_t;
 #define SWLR_ERROR_BACKEND_WINAPI_REGISTER_CLASS SWLR_BACKEND(0)
 #define SWLR_ERROR_BACKEND_WINAPI_HANDLE SWLR_BACKEND(1)
 #define SWLR_ERROR_BACKEND_WINAPI_DEVICE SWLR_BACKEND(2)
+#define SWLR_ERROR_BACKEND_WINAPI_RAW_INPUT SWLR_BACKEND(3)
