@@ -46,6 +46,7 @@ enum swl_event_type
 	SWLE_MOUSEMOVE,
 	SWLE_MOUSERAW,
 	SWLE_RESIZE,
+	SWLE_FOCUS,
 	SWLE_QUIT
 };
 
@@ -65,6 +66,11 @@ typedef enum swl_key_type
 	SWLK_RETURN,
 	SWLK_ESCAPE
 } swl_key_t;
+
+struct swl_focus_event
+{
+	bool acquired;
+};
 
 struct swl_key_event
 {
@@ -91,6 +97,7 @@ struct swl_event
 		struct swl_key_event key_event;
 		struct swl_mouse_event mouse_event;
 		struct swl_size_event size_event;
+		struct swl_focus_event focus_event;
 	};
 };
 

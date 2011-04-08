@@ -3,6 +3,13 @@
 static HWND window_handle = 0;
 static ATOM register_class = 0;
 
+enum wm_resend_id
+{
+	WMM_RESIZE,
+	WMM_MOUSERAW,
+	WMM_FOCUS,
+};
+
 static bool update_cursor()
 {
 	if(!swl.cursor)
@@ -96,18 +103,23 @@ static bool process_message(struct swl_event *event, MSG *msg)
 		
 	switch(msg->message)
 	{
-		case WM_USER:
+		case WM_USER + WMM_RESIZE:
 			event->type = SWLE_RESIZE;
 			event->size_event.width = msg->wParam;
 			event->size_event.height = msg->lParam;
 			break;
 
-		case WM_USER + 1:
+		case WM_USER + WMM_MOUSERAW:
 			event->type = SWLE_MOUSERAW;
 			event->mouse_event.x = (int)msg->wParam;
 			event->mouse_event.y = (int)msg->lParam;
 			break;
-
+		
+		case WM_USER + WMM_FOCUS:
+			event->type = SWLE_FOCUS;
+			event->focus_event.acquired = (bool)msg->wParam;
+			break;
+		
 		case WM_KEYDOWN:
 			event->type = SWLE_KEYDOWN;
 			event->key_event.key = vk_to_swl(msg->wParam);
@@ -201,10 +213,18 @@ static LRESULT CALLBACK wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 				
                 GetRawInputData((HRAWINPUT)lParam, RID_INPUT, &input, &size, sizeof(input.header));
 				
-				PostMessage(hWnd, WM_USER + 1, input.data.mouse.lLastX, input.data.mouse.lLastY);
+				PostMessage(hWnd, WM_USER + WMM_MOUSERAW, input.data.mouse.lLastX, input.data.mouse.lLastY);
             }
 			break;
 			
+		case WM_KILLFOCUS:
+			PostMessage(hWnd, WM_USER + WMM_FOCUS, false, 0);
+			break;
+		
+		case WM_SETFOCUS:
+			PostMessage(hWnd, WM_USER + WMM_FOCUS, true, 0);
+			break;
+		
 		case WM_SYSCOMMAND:
 			switch (wParam)
 			{
@@ -227,7 +247,7 @@ static LRESULT CALLBACK wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 			break;
 
 		case WM_SIZE:
-			PostMessage(hWnd, WM_USER, LOWORD(lParam), HIWORD(lParam));
+			PostMessage(hWnd, WM_USER + WMM_RESIZE, LOWORD(lParam), HIWORD(lParam));
 			return 0;
 
 		case WM_CLOSE:
