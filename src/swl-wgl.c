@@ -1,4 +1,3 @@
-#include <windows.h>
 #include "swl-private.h"
 
 static HGLRC wgl_rc;

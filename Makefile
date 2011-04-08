@@ -24,7 +24,7 @@ LIBS += EGL
 endif
 
 ifeq ($(SWL_CONTEXT_WGL),1)
-LIBS += gdi32
+LIBS += gdi32 opengl32
 endif
 
 CPPFLAGS += -Iinclude
