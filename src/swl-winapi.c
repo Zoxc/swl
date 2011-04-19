@@ -85,6 +85,9 @@ static swl_key_t vk_to_swl(DWORD key)
 		case VK_ESCAPE:
 			return SWLK_ESCAPE;
 			
+		case VK_SPACE:
+			return SWLK_SPACE;
+			
 		default:
 			return SWLK_UNKNOWN;
 	}
@@ -121,8 +124,13 @@ static bool process_message(struct swl_event *event, MSG *msg)
 			break;
 		
 		case WM_KEYDOWN:
-			event->type = SWLE_KEYDOWN;
 			event->key_event.key = vk_to_swl(msg->wParam);
+			
+			if(msg->lParam & (1 << 30))
+				event->type = SWLE_KEYREPEAT;
+			else
+				event->type = SWLE_KEYDOWN;
+			
 			break;
 
 		case WM_KEYUP:

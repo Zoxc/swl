@@ -1,8 +1,26 @@
 #include "swl-private.h"
 
+#ifndef SWL_BACKEND_WINAPI
+	#include <sys/time.h>
+#endif
+
 void swl_context_swap(void);
 
 struct swl_data swl;
+
+SWL_API size_t swl_get_ticks(void)
+{
+	#ifdef SWL_BACKEND_WINAPI
+		return GetTickCount();
+	#else
+		struct timeval tv;
+
+		if(gettimeofday(&tv, 0) != 0)
+			return 0;
+
+		return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+	#endif
+}
 
 SWL_API enum swl_result swl_set_config(enum swl_configurable field, size_t value)
 {

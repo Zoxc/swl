@@ -40,6 +40,7 @@ enum swl_result
 enum swl_event_type
 {
 	SWLE_KEYUP,
+	SWLE_KEYREPEAT,
 	SWLE_KEYDOWN,
 	SWLE_MOUSEUP,
 	SWLE_MOUSEDOWN,
@@ -63,6 +64,7 @@ typedef enum swl_key_type
 	SWLK_DOWN,
 	SWLK_LEFT,
 	SWLK_RIGHT,
+	SWLK_SPACE,
 	SWLK_RETURN,
 	SWLK_ESCAPE
 } swl_key_t;
@@ -124,6 +126,7 @@ SWL_API void swl_swap(void);
 SWL_API bool swl_query(struct swl_event *event);
 SWL_API bool swl_wait(struct swl_event *event);
 SWL_API void *swl_get_function(const char *name);
+SWL_API size_t swl_get_ticks(void);
 
 #ifdef __cplusplus
 }
