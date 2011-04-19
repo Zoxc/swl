@@ -110,8 +110,9 @@ SWL_API bool swl_wait(struct swl_event *event)
 	return true;
 }
 
-void swl_platform_update(enum swl_configurable field, size_t value)
+enum swl_result swl_platform_update(enum swl_configurable field, size_t value)
 {
+	return SWLR_OK;
 }
 
 SWL_API enum swl_result swl_platform_allocate(const char *title, unsigned int width, unsigned int height, swl_window_t *window, swl_display_t *display)
